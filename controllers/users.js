@@ -16,7 +16,7 @@ async function checkEquipExists(e) {
 
 router.get('/', verifyToken, async (req, res) => {
   try {
-    const author = await User.findById(req.user._id).populate("sheets");
+    const author = await User.findById(req.user._id).populate("sheets"); //! needs testing with user.js experimental (commented out) line
 
     res.json(author.sheets);
   } catch (err) {
