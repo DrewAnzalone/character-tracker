@@ -34,9 +34,9 @@ router.delete("/:sheetId", verifyToken, async (req, res) => {
           return res.status(403).send("You are not allowed to do that!");
       }
       const deletedSheet = await Sheet.findByIdAndDelete(req.params.sheetId);
-      author.sheets.filter(id => id !== deletedSheet._id);
+      author.sheets = author.sheets.filter(id => id !== deletedSheet._id);
       await User.findByIdAndUpdate(author._id, author);
-      
+
       res.status(200).json(deletedSheet);
 
   } catch (err) {
