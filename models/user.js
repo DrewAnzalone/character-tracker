@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  sheets: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Sheet",
+  },
 });
 
 userSchema.set('toJSON', {
