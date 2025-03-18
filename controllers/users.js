@@ -1,4 +1,5 @@
 const express = require('express');
+const Sheet = require("../models/sheet.js");
 const router = express.Router();
 
 const User = require('../models/user');
@@ -15,21 +16,31 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-router.get('/:userId', verifyToken, async (req, res) => {
+router.get("/:sheetId", verifyToken, async (req, res) => {
   try {
-    if (req.user._id !== req.params.userId){
-      return res.status(403).json({ err: "Unauthorized"});
-    }
+      const sheet = await Sheet.findById(req.params.sheetId);
+      res.status(200).json(sheet);
+  } catch {
+      res.status(500).json({ err: err.message })
+  }
+});
 
-    const user = await User.findById(req.params.userId);
 
-    if (!user) {
-      return res.status(404).json({ err: 'User not found.'});
-    }
+router.delete("/:sheetId", verifyToken, async (req, res) => {
+  try {
+      const author = await User.findById(req.body._id);
 
-    res.json({ user });
+      if (!author.sheets.includes(req.params.sheetId)) {
+          return res.status(403).send("You are not allowed to do that!");
+      }
+      const deletedSheet = await Sheet.findByIdAndDelete(req.params.sheetId);
+      author.sheets = author.sheets.filter(id => id !== deletedSheet._id);
+      await User.findByIdAndUpdate(author._id, author);
+
+      res.status(200).json(deletedSheet);
+
   } catch (err) {
-    res.status(500).json({ err: err.message });
+      res.status(500).json({ err: err.message });
   }
 });
 
