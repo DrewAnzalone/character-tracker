@@ -28,13 +28,15 @@ router.get("/:sheetId", verifyToken, async (req, res) => {
 
 router.delete("/:sheetId", verifyToken, async (req, res) => {
   try {
-      const sheet = await Sheet.findById(req.params.sheetId);
       const author = await User.findById(req.body._id);
 
-      if (!author.sheets.includes(sheet._id)) {
+      if (!author.sheets.includes(req.params.sheetId)) {
           return res.status(403).send("You are not allowed to do that!");
       }
       const deletedSheet = await Sheet.findByIdAndDelete(req.params.sheetId);
+      author.sheets.filter(id => id !== deletedSheet._id);
+      await User.findByIdAndUpdate(author._id, author);
+      
       res.status(200).json(deletedSheet);
 
   } catch (err) {
