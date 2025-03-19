@@ -24,6 +24,7 @@ mongoose.connection.on('connected', () => {
 app.use(cors());
 app.use(express.json());
 app.use(logger('dev'));
+app.use(cors({ origin: /http:\/\/localhost:\d+$/ })); //! risky, remove for final deployment
 
 // Routes
 app.use('/auth', authRouter);
