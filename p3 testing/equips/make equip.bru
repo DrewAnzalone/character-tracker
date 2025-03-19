@@ -1,0 +1,20 @@
+meta {
+  name: make equip
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/equips
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "starter  sword",
+    "type": "Sword",
+    "statModify": "baseAtk",
+    "statValue": 3
+  }
+}

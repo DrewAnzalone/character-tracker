@@ -1,0 +1,30 @@
+meta {
+  name: update sheet
+  type: http
+  seq: 5
+}
+
+put {
+  url: http://localhost:3000/users/67dae2a1274488a9c9a69a07
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoiYSIsIl9pZCI6IjY3ZGFkYzRiYTY2OTExYTdjNDQ4Zjk2YyJ9LCJpYXQiOjE3NDIzOTc4OTR9.HiO1u7kx8f322oYBF0YQymQiFuad3Ish9mxYGx5lcVI
+}
+
+body:json {
+  {
+    "name": "Conan",
+    "level": 1,
+    "class": "barbarian",
+    "baseHP": 15,
+    "baseAtk": 7,
+    "baseDef": 8,
+    "baseMagic": 1,
+    "equips": [
+      "67dadb736e3348d457b06277"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+meta {
+  name: edit eq
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:3000/equips/67dadb736e3348d457b06277
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJuYW1lIjoiYSIsIl9pZCI6IjY3ZGFkYzRiYTY2OTExYTdjNDQ4Zjk2YyJ9LCJpYXQiOjE3NDIzOTY0OTF9.D894giXT8qH_OH5zDAxdt_OVEhablHMHfG_Fx639_jw
+}
+
+body:json {
+  {
+    "name": "Starter sword",
+    "type": "Sword",
+    "statModify": "baseAtk",
+    "statValue": 2
+  }
+}
