@@ -3,7 +3,7 @@ const verifyToken = require("../middleware/verify-token.js")
 const Equip = require("../models/equip.js")
 const router = express.Router()
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   try {
     const newEquip = await Equip.create(req.body);
     res.status(201).json(newEquip);
@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const equips = await Equip.find();
     res.status(200).json(equips);
@@ -21,7 +21,7 @@ router.get("/", verifyToken, async (req, res) => {
   }
 });
 
-router.get('/:equipId', verifyToken, async (req, res) => {
+router.get('/:equipId', async (req, res) => {
   try {
     const chosenEquip = await Equip.findById(req.params.equipId);
 
