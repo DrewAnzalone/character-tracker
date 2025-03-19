@@ -6,9 +6,13 @@ const Sheet = require('../models/sheet');
 const User = require('../models/user');
 const verifyToken = require('../middleware/verify-token');
 
-async function checkEquipExists(e) {
+async function checkEquipExists(array) {
   try {
-    return await Equip.exists({ _id: e });
+    for (const id of array) {
+      const equipExists = !!(await Equip.exists({ _id: id }));
+      if (!equipExists) return false;
+    }
+    return true;
   } catch (err) {
     console.log("Error checking if equip exists:", err);
     return false;
@@ -17,8 +21,7 @@ async function checkEquipExists(e) {
 
 router.get('/', verifyToken, async (req, res) => {
   try {
-    const author = await User.findById(req.user._id).populate("sheets"); //! needs testing with user.js experimental (commented out) line
-
+    const author = await User.findById(req.user._id).populate("sheets");
     res.json(author.sheets);
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -35,24 +38,27 @@ router.get("/:sheetId", verifyToken, async (req, res) => {
 });
 
 router.get("/:sheetId/:equipId", verifyToken, async (req, res) => {
-  try{
+  try {
     const { sheetId, equipId } = req.params;
-    const sheet = await Sheet.findById(sheetId);
-    
+    const sheet = await Sheet.findById(sheetId).populate("equips");
+
     if (!sheet) {
       return res.status(404).json({ message: "Sheet not found!" });
     }
     const equip = sheet.equips.find((e) => e._id.toString() === equipId);
 
     if (!equip) {
-      return res.status(404).json({ message: "No equipment on this sheet yet!" });
+      return res.status(404).json({ message: "Equipment not found!" });
     }
     res.status(200).json(equip);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (res.statusCode === 404) {
+      res.json({ err: err.message });
+    } else {
+      res.status(500).json({ error: err.message });
+    }
   }
 });
-
 
 router.delete("/:sheetId", verifyToken, async (req, res) => {
   try {
@@ -73,13 +79,12 @@ router.delete("/:sheetId", verifyToken, async (req, res) => {
 });
 
 router.post('/', verifyToken, async (req, res) => {
-  const allValid = await req.body.equips.every(checkEquipExists);
-
+  const allValid = await checkEquipExists(req.body.equips);
   try {
     if (!allValid) throw new Error("Invalid equips");
     const createdSheet = await Sheet.create(req.body);
 
-    const author = await User.findById(req.body._id);
+    const author = await User.findById(req.user._id);
     author.sheets.push(createdSheet._id);
     await User.findByIdAndUpdate(author._id, author);
 
@@ -90,13 +95,13 @@ router.post('/', verifyToken, async (req, res) => {
 });
 
 router.put("/:sheetId", verifyToken, async (req, res) => {
-  const allValid = await req.body.equips.every(checkEquipExists);
+  const allValid = await checkEquipExists(req.body.equips);
 
   try {
     if (!allValid) throw new Error("Invalid equips");
 
     const sheet = await Sheet.findById(req.params.sheetId);
-    const author = await User.findById(req.body._id);
+    const author = await User.findById(req.user._id);
 
     if (!author.sheets.includes(sheet._id)) {
       return res.status(403).send("You are not allowed to do that!");
