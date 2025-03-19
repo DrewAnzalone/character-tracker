@@ -41,7 +41,7 @@ router.get('/:equipId', verifyToken, async (req, res) => {
 
 router.put('/:equipId', verifyToken, async (req, res) => {
   try {
-    const updatedEquip = await Equip.findByIdAndUpdate(req.params.equipId, req.body);
+    const updatedEquip = await Equip.findByIdAndUpdate(req.params.equipId, req.body, {new: true});
 
     if (!updatedEquip) {
       res.status(404);
