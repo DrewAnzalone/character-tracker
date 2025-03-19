@@ -12,8 +12,6 @@ const userSchema = new mongoose.Schema({
   sheets: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Sheet",
-    // populate: { path: "equips" },
-    //? experimental
   },
 });
 
