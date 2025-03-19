@@ -25,6 +25,25 @@ router.get("/:sheetId", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/:sheetId/:equipId", verifyToken, async (req, res) => {
+  try{
+    const { sheetId, equipId } = req.params;
+    const sheet = await Sheet.findById(sheetId);
+    
+    if (!sheet) {
+      return res.status(404).json({ message: "Sheet not found!" });
+    }
+    const equip = sheet.equips.find((e) => e._id.toString() === equipId);
+
+    if (!equip) {
+      return res.status(404).json({ message: "No equipment on this sheet yet!" });
+    }
+    res.status(200).json(equip);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 router.delete("/:sheetId", verifyToken, async (req, res) => {
   try {
