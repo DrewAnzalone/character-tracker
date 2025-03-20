@@ -79,6 +79,7 @@ router.delete("/:sheetId", verifyToken, async (req, res) => {
 });
 
 router.post('/', verifyToken, async (req, res) => {
+  req.body.equips ??= [];
   const allValid = await checkEquipExists(req.body.equips);
   try {
     if (!allValid) throw new Error("Invalid equips");
