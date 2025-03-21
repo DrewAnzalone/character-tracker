@@ -7,6 +7,7 @@ const User = require('../models/user');
 const verifyToken = require('../middleware/verify-token');
 
 async function checkEquipExists(array) {
+  array ??= [];
   try {
     for (const id of array) {
       const equipExists = !!(await Equip.exists({ _id: id }));
@@ -62,13 +63,12 @@ router.get("/:sheetId/:equipId", verifyToken, async (req, res) => {
 
 router.delete("/:sheetId", verifyToken, async (req, res) => {
   try {
-    const author = await User.findById(req.body._id);
-
+    const author = await User.findById(req.user._id);
     if (!author.sheets.includes(req.params.sheetId)) {
       return res.status(403).send("You are not allowed to do that!");
     }
     const deletedSheet = await Sheet.findByIdAndDelete(req.params.sheetId);
-    author.sheets = author.sheets.filter(id => id !== deletedSheet._id);
+    author.sheets = author.sheets.filter(id => !(id.equals(deletedSheet._id)));
     await User.findByIdAndUpdate(author._id, author);
 
     res.status(200).json(deletedSheet);
@@ -79,7 +79,6 @@ router.delete("/:sheetId", verifyToken, async (req, res) => {
 });
 
 router.post('/', verifyToken, async (req, res) => {
-  req.body.equips ??= [];
   const allValid = await checkEquipExists(req.body.equips);
   try {
     if (!allValid) throw new Error("Invalid equips");
