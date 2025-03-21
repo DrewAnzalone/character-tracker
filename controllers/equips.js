@@ -68,17 +68,15 @@ router.delete('/:equipId', verifyToken, async (req, res) => {
 
     const isEquipped = !!(await Sheet.findOne({ equips: equipToBeDeleted._id }));
     if (isEquipped) {
+      res.status(403);
       throw new Error("Equips on any sheets cannot be deleted");
     }
 
     await Equip.findByIdAndDelete(equipToBeDeleted._id);
     res.status(200).json(equipToBeDeleted);
   } catch (err) {
-    if (res.statusCode === 404) {
-      res.json({ err: err.message });
-    } else {
-      res.status(500).json({ err: err.message });
-    }
+    if (!([404, 403].includes(res.statusCode))) res.status(500);
+    res.json({ err: err.message });
   }
 });
 
