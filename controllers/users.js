@@ -80,7 +80,6 @@ router.delete("/:sheetId", verifyToken, async (req, res) => {
 
 router.post('/', verifyToken, async (req, res) => {
   const allValid = await checkEquipExists(req.body.equips);
-    console.log(formData.equips)
   try {
     if (!allValid) throw new Error("Invalid equips");
     const createdSheet = await Sheet.create(req.body);
