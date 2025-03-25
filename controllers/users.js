@@ -88,7 +88,8 @@ router.post('/', verifyToken, async (req, res) => {
     author.sheets.push(createdSheet._id);
     await User.findByIdAndUpdate(author._id, author);
 
-    res.status(201).json(createdSheet);
+    const populatedSheet = await createdSheet.populate('equips')
+    res.status(201).json(populatedSheet);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
@@ -113,7 +114,7 @@ router.put("/:sheetId", verifyToken, async (req, res) => {
       { new: true }
     ).populate('equips');
 
-    res.status(200).json(updatedSheet)
+    res.status(200).json(updatedSheet);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
