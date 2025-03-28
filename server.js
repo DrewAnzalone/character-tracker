@@ -21,10 +21,10 @@ mongoose.connection.on('connected', () => {
 });
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(logger('dev'));
-app.use(cors({ origin: /http:\/\/localhost:\d+$/ })); //! risky, remove for final deployment
+app.use(cors({ origin: ['https://character-tracker.netlify.app']}));
+// app.use(cors({ origin: ['https://character-tracker.netlify.app', 'http://localhost:5173']}));
 
 // Routes
 app.use('/auth', authRouter);
